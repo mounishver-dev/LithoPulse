@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "LithoPulse",
+    "slug": "lithopulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "lithopulse",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0D0F14"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.lithopulse.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0F14"
+      },
+      "package": "com.lithopulse.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow LithoPulse to use your location to show nearby disaster alerts and evacuation routes."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow LithoPulse to access your camera for hazard reporting."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
