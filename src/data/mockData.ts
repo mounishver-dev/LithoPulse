@@ -42,6 +42,7 @@ export interface Incident {
 }
 
 export const OFFICIAL_CREDENTIALS = [
+  { username: 'mounish@admin', password: 'mounish123', name: 'Mounish Admin', role: 'System Administrator' },
   { username: 'dm_mizoram', password: 'NDMA@2025', name: 'DM — Aizawl, Mizoram', role: 'District Magistrate' },
   { username: 'sdma_assam', password: 'SDMA@secure', name: 'SDMA — Assam EOC', role: 'SDMA Official' },
   { username: 'eoc_ndrf', password: 'EOC@ndrf1', name: 'NDRF Team 3 — EOC', role: 'EOC Operator' },

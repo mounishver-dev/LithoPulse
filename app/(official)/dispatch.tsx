@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, StatusBar, TouchableOpacity, Switch, Modal, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, FontSize, FontFamily, Spacing, Radius } from '../../src/constants/theme';
 
 type Lang = 'Mizo' | 'Assamese' | 'Hindi' | 'English';
@@ -111,12 +110,11 @@ export default function DispatchScreen() {
           </View>
         ) : (
           <TouchableOpacity style={s.broadcastBtn} onPress={() => setShowConfirm(true)} disabled={dispatching}>
-            <LinearGradient colors={['#D43030', Colors.status.critical, '#A02020']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.broadcastBtnInner}>
+            <View style={s.broadcastBtnInner}>
               {dispatching
                 ? <ActivityIndicator color="#fff" />
                 : <><Ionicons name="megaphone" size={17} color="#fff" /><Text style={s.broadcastBtnTxt}>BROADCAST CAP EVACUATION ALERT</Text></>}
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -171,7 +169,7 @@ const s = StyleSheet.create({
   msgBox: { backgroundColor: Colors.bg.secondary, borderRadius: Radius.sm, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border.subtle },
   msgTxt: { fontFamily: FontFamily.regular, fontSize: FontSize.sm, color: Colors.text.secondary, lineHeight: 20 },
   broadcastBtn: { borderRadius: Radius.md, overflow: 'hidden' },
-  broadcastBtnInner: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 54, gap: 10 },
+  broadcastBtnInner: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 54, gap: 10, backgroundColor: Colors.status.critical, borderRadius: Radius.md },
   broadcastBtnTxt: { fontFamily: FontFamily.bold, fontSize: FontSize.sm, color: '#fff', letterSpacing: 0.4 },
   successCard: { alignItems: 'center', backgroundColor: Colors.status.safeBg, borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.status.safeBorder, padding: Spacing.lg, gap: 6 },
   successTxt: { fontFamily: FontFamily.semiBold, fontSize: FontSize.base, color: Colors.status.safe },

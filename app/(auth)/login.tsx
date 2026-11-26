@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore } from '../../src/store/authStore';
 import { Colors, FontSize, FontFamily, Spacing, Radius } from '../../src/constants/theme';
 
@@ -117,12 +116,11 @@ export default function LoginScreen() {
           </View>
 
           <TouchableOpacity style={s.loginBtn} onPress={handleLogin} disabled={isLoading}>
-            <LinearGradient colors={['#5A7AF8', Colors.primary, '#3A56D4']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.loginBtnInner}>
+            <View style={s.loginBtnInner}>
               {isLoading
                 ? <ActivityIndicator color="#fff" size="small" />
                 : <><Text style={s.loginBtnText}>Sign In</Text><Ionicons name="arrow-forward" size={16} color="#fff" /></>}
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
 
           {tab === 'citizen' ? (
@@ -196,7 +194,7 @@ const s = StyleSheet.create({
   },
   input: { flex: 1, fontFamily: FontFamily.regular, fontSize: FontSize.base, color: Colors.text.primary },
   loginBtn: { borderRadius: Radius.md, overflow: 'hidden', marginTop: 4 },
-  loginBtnInner: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50, gap: 8 },
+  loginBtnInner: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50, gap: 8, backgroundColor: Colors.primary, borderRadius: Radius.md },
   loginBtnText: { fontFamily: FontFamily.semiBold, fontSize: FontSize.base, color: '#fff' },
   registerLink: { alignItems: 'center', paddingVertical: 4 },
   registerText: { fontFamily: FontFamily.regular, fontSize: FontSize.sm, color: Colors.text.secondary },

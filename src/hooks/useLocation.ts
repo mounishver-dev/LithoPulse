@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import * as Location from 'expo-location';
 import { MOCK_ALERTS, Alert } from '../data/mockData';
 
 export interface LocationData {
@@ -11,43 +10,37 @@ export interface LocationData {
   refresh: () => void;
 }
 
+// Simulated GPS coordinates for Aizawl, Mizoram — realistic for disaster monitoring demo
+const BASE_LAT = 23.7307;
+const BASE_LON = 92.7173;
+const DISTRICTS = ['Aizawl', 'Champhai', 'Kolasib', 'Lunglei', 'Mamit', 'Serchhip', 'Lawngtlai', 'Saiha'];
+
 const distKm = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = Math.sin(dLat / 2) ** 2 +
     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
-  return Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 10) / 10;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 10) / 10;
 };
 
 export const useLocation = (): LocationData => {
   const [coords, setCoords] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [district, setDistrict] = useState('Locating...');
-  const [stateName, setStateName] = useState('');
+  const [district] = useState(DISTRICTS[0]);
+  const [stateName] = useState('Mizoram');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
+  const fetch = useCallback(() => {
     setIsLoading(true);
-    setError(null);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setDistrict('Permission Denied'); setIsLoading(false); return;
-      }
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-      setCoords(loc.coords);
-      const [geo] = await Location.reverseGeocodeAsync(loc.coords);
-      if (geo) {
-        setDistrict(geo.district || geo.city || geo.subregion || 'Unknown District');
-        setStateName(geo.region || '');
-      }
-    } catch {
-      setError('Unable to determine location');
-      setDistrict('Unknown');
-    } finally {
+    // Simulate async GPS acquisition
+    setTimeout(() => {
+      setCoords({
+        latitude: BASE_LAT + (Math.random() - 0.5) * 0.002,
+        longitude: BASE_LON + (Math.random() - 0.5) * 0.002,
+      });
       setIsLoading(false);
-    }
+    }, 800);
   }, []);
 
   useEffect(() => { fetch(); }, [fetch]);

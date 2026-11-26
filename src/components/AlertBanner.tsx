@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, FontSize, FontFamily, Spacing, Radius } from '../constants/theme';
 import { Alert } from '../data/mockData';
@@ -24,7 +23,7 @@ export const AlertBanner: React.FC<Props> = ({ alert, compact = false }) => {
   if (!alert) return null;
   const isCritical = alert.threatLevel === 'critical';
   const accent = isCritical ? Colors.status.critical : Colors.status.warning;
-  const gradColors: [string, string] = isCritical ? ['#280A0A', '#1A0505'] : ['#281A05', '#1A1005'];
+  const bgColor = isCritical ? '#1A0505' : '#1A1005';
 
   if (compact) {
     return (
@@ -40,7 +39,7 @@ export const AlertBanner: React.FC<Props> = ({ alert, compact = false }) => {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <LinearGradient colors={gradColors} style={styles.gradient}>
+      <View style={[styles.gradient, { backgroundColor: bgColor }]}>
         <View style={[styles.topBar, { backgroundColor: accent }]} />
         <View style={styles.content}>
           <View style={styles.titleRow}>
@@ -70,7 +69,7 @@ export const AlertBanner: React.FC<Props> = ({ alert, compact = false }) => {
             </View>
           </View>
         </View>
-      </LinearGradient>
+      </View>
     </Animated.View>
   );
 };

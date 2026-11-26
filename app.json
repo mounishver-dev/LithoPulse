@@ -6,7 +6,10 @@
     "orientation": "portrait",
     "scheme": "lithopulse",
     "userInterfaceStyle": "dark",
+    "icon": "./assets/images/icon.png",
     "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
       "backgroundColor": "#0D0F14"
     },
     "ios": {
@@ -14,10 +17,18 @@
       "bundleIdentifier": "com.lithopulse.app"
     },
     "android": {
+      "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0D0F14"
       },
-      "package": "com.lithopulse.app"
+      "package": "com.lithopulse.app",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -25,12 +36,6 @@
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "Allow LithoPulse to use your location to show nearby disaster alerts and evacuation routes."
-        }
-      ],
       [
         "expo-camera",
         {
@@ -40,6 +45,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "de54c8fd-422e-44a2-b2c1-e8d655912c39"
+      }
     }
   }
 }

@@ -5,37 +5,24 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import * as Location from 'expo-location';
 import { useAuthStore } from '../../src/store/authStore';
 import { Colors, FontSize, FontFamily, Spacing, Radius } from '../../src/constants/theme';
+
+const DISTRICTS = [
+  'Aizawl', 'Champhai', 'Kolasib', 'Lunglei', 'Mamit',
+  'Serchhip', 'Lawngtlai', 'Saiha', 'Hnahthial', 'Khawzawl', 'Saitual',
+];
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
-  const [district, setDistrict] = useState('');
-  const [locLoading, setLocLoading] = useState(false);
-  const [locSet, setLocSet] = useState(false);
+  const [district, setDistrict] = useState(DISTRICTS[0]);
+  const [showPicker, setShowPicker] = useState(false);
   const { registerCitizen, isLoading, error, clearError } = useAuthStore();
 
-  const detectLocation = async () => {
-    setLocLoading(true);
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') { setDistrict('Permission denied'); setLocLoading(false); return; }
-      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-      const [geo] = await Location.reverseGeocodeAsync(loc.coords);
-      if (geo) {
-        setDistrict(geo.district || geo.city || geo.subregion || 'Unknown District');
-        setLocSet(true);
-      }
-    } catch { setDistrict('Unable to detect'); }
-    finally { setLocLoading(false); }
-  };
-
-  useEffect(() => { detectLocation(); return clearError; }, []);
+  useEffect(() => { return clearError; }, []);
 
   const handleRegister = async () => {
     if (!name.trim() || !email.trim() || !password) return;
@@ -55,7 +42,7 @@ export default function RegisterScreen() {
 
         <View style={s.titleArea}>
           <Text style={s.title}>Create Account</Text>
-          <Text style={s.subtitle}>Your location is auto-detected so you receive alerts for your district — no manual entry needed.</Text>
+          <Text style={s.subtitle}>Select your district to receive geo-targeted disaster alerts for your area.</Text>
         </View>
 
         <View style={s.card}>
@@ -94,31 +81,35 @@ export default function RegisterScreen() {
             </View>
           </View>
 
-          {/* GPS District */}
+          {/* District picker */}
           <View style={s.field}>
             <Text style={s.label}>District / Area</Text>
-            <View style={[s.inputRow, locSet && s.inputRowActive]}>
-              <Ionicons name={locSet ? 'location' : 'location-outline'} size={16}
-                color={locSet ? Colors.status.safe : Colors.text.tertiary} />
-              <Text style={[s.locText, locSet && s.locTextActive]}>
-                {locLoading ? 'Detecting location...' : district || 'Detecting...'}
-              </Text>
-              <TouchableOpacity onPress={detectLocation} disabled={locLoading}>
-                {locLoading
-                  ? <ActivityIndicator size="small" color={Colors.primary} />
-                  : <Ionicons name="refresh" size={15} color={Colors.primary} />}
-              </TouchableOpacity>
-            </View>
-            <Text style={s.locHint}>📍 Auto-detected from GPS · Used for proximity alerts</Text>
+            <TouchableOpacity style={[s.inputRow, s.inputRowActive]} onPress={() => setShowPicker(!showPicker)}>
+              <Ionicons name="location" size={16} color={Colors.status.safe} />
+              <Text style={[s.locText, s.locTextActive]}>{district}</Text>
+              <Ionicons name={showPicker ? 'chevron-up' : 'chevron-down'} size={16} color={Colors.text.tertiary} />
+            </TouchableOpacity>
+            {showPicker && (
+              <View style={s.pickerList}>
+                {DISTRICTS.map(d => (
+                  <TouchableOpacity key={d} style={[s.pickerItem, d === district && s.pickerItemOn]}
+                    onPress={() => { setDistrict(d); setShowPicker(false); }}>
+                    <Ionicons name="location-outline" size={13} color={d === district ? Colors.primary : Colors.text.tertiary} />
+                    <Text style={[s.pickerTxt, d === district && s.pickerTxtOn]}>{d}, Mizoram</Text>
+                    {d === district && <Ionicons name="checkmark" size={13} color={Colors.primary} style={{ marginLeft: 'auto' }} />}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+            <Text style={s.locHint}>📍 Used for proximity alerts in your district</Text>
           </View>
 
           <TouchableOpacity style={s.btn} onPress={handleRegister} disabled={isLoading}>
-            <LinearGradient colors={['#5A7AF8', Colors.primary, '#3A56D4']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={s.btnInner}>
+            <View style={s.btnInner}>
               {isLoading
                 ? <ActivityIndicator color="#fff" size="small" />
                 : <Text style={s.btnText}>Create Account</Text>}
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
 
           <Text style={s.terms}>By registering, you agree to receive geo-targeted disaster alerts. No data is sold or shared.</Text>
@@ -156,8 +147,20 @@ const s = StyleSheet.create({
   locText: { flex: 1, fontFamily: FontFamily.regular, fontSize: FontSize.base, color: Colors.text.tertiary },
   locTextActive: { color: Colors.text.primary },
   locHint: { fontFamily: FontFamily.regular, fontSize: FontSize.xs, color: Colors.text.tertiary, marginTop: -2 },
+  pickerList: {
+    backgroundColor: Colors.bg.secondary, borderRadius: Radius.md, borderWidth: 1,
+    borderColor: Colors.border.default, overflow: 'hidden', marginTop: -2,
+  },
+  pickerItem: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    paddingHorizontal: Spacing.md, paddingVertical: 11,
+    borderBottomWidth: 1, borderBottomColor: Colors.border.subtle,
+  },
+  pickerItemOn: { backgroundColor: Colors.primaryBg },
+  pickerTxt: { fontFamily: FontFamily.regular, fontSize: FontSize.sm, color: Colors.text.secondary },
+  pickerTxtOn: { color: Colors.primary, fontFamily: FontFamily.medium },
   btn: { borderRadius: Radius.md, overflow: 'hidden', marginTop: 4 },
-  btnInner: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50 },
+  btnInner: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 50, backgroundColor: Colors.primary, borderRadius: Radius.md },
   btnText: { fontFamily: FontFamily.semiBold, fontSize: FontSize.base, color: '#fff' },
   terms: { fontFamily: FontFamily.regular, fontSize: FontSize.xs, color: Colors.text.tertiary, textAlign: 'center', lineHeight: 16 },
 });
